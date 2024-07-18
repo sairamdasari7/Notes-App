@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <div id="auth">
+            <h2>Login</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+            <h2>Register</h2>
+            <form id="register-form">
+                <input type="text" id="register-name" placeholder="Name" required>
+                <input type="email" id="register-email" placeholder="Email" required>
+                <input type="password" id="register-password" placeholder="Password" required>
+                <button type="submit">Register</button>
+            </form>
+        </div>
+        <div id="notes">
+            <button id="logout">Logout</button>
+            <h2>Create Note</h2>
+            <form id="create-note-form">
+                <input type="text" id="note-title" placeholder="Title">
+                <textarea id="note-content" placeholder="Content"></textarea>
+                <input type="text" id="note-tags" placeholder="Tags (comma-separated)">
+                <input type="color" id="note-color" value="#ffffff">
+                <input type="datetime-local" id="note-reminder">
+                <button type="submit">Create</button>
+            </form>
+            <h2>Notes</h2>
+            <div id="notes-list"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

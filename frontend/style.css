@@ -1,0 +1,86 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f4f4f4;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#auth, #notes {
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input, textarea, button {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#notes-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.note {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.note-tags, .note-color, .note-reminder {
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #555;
+}
+
+@media (min-width: 768px) {
+    #app {
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    #auth, #notes {
+        max-width: 45%;
+    }
+}
