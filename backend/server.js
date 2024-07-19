@@ -13,8 +13,8 @@ connectDB();
 
 // Enable CORS with specific origin
 const corsOptions = {
-    origin: 'http://127.0.0.1:5500',
-    optionsSuccessStatus: 200
+  origin: 'http://127.0.0.1:5500',
+  optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
 
