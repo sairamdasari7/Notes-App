@@ -1,15 +1,15 @@
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
     const apiUrl = 'http://localhost:5000/api';
     let token = localStorage.getItem('token');
 
     const showAuth = () => {
-        $('#auth').show();
-        $('#notes').hide();
+        document.getElementById('auth').style.display = 'block';
+        document.getElementById('notes').style.display = 'none';
     };
 
     const showNotes = () => {
-        $('#auth').hide();
-        $('#notes').show();
+        document.getElementById('auth').style.display = 'none';
+        document.getElementById('notes').style.display = 'block';
         fetchNotes();
     };
 
@@ -22,126 +22,137 @@ $(document).ready(function() {
     };
 
     const fetchNotes = () => {
-        $.ajax({
-            url: `${apiUrl}/notes`,
+        fetch(`${apiUrl}/notes`, {
             method: 'GET',
             headers: {
                 'x-auth-token': token
-            },
-            success: (notes) => {
-                renderNotes(notes);
-            },
-            error: () => {
-                alert('Failed to fetch notes');
             }
+        })
+        .then(response => response.json())
+        .then(notes => {
+            renderNotes(notes);
+        })
+        .catch(() => {
+            alert('Failed to fetch notes');
         });
     };
 
     const renderNotes = (notes) => {
-        $('#notes-list').empty();
+        const notesList = document.getElementById('notes-list');
+        notesList.innerHTML = '';
         notes.forEach(note => {
-            $('#notes-list').append(`
-                <div class="note" style="background-color: ${note.color}">
-                    <div class="note-header">
-                        <h3>${note.title}</h3>
-                        <button class="delete-note" data-id="${note._id}">Delete</button>
-                    </div>
-                    <p>${note.content}</p>
-                    <div class="note-tags">${note.tags.join(', ')}</div>
-                    <div class="note-color">Color: ${note.color}</div>
-                    <div class="note-reminder">Reminder: ${new Date(note.reminder).toLocaleString()}</div>
+            const noteDiv = document.createElement('div');
+            noteDiv.className = 'note';
+            noteDiv.style.backgroundColor = note.color;
+            noteDiv.innerHTML = `
+                <div class="note-header">
+                    <h3>${note.title}</h3>
+                    <button class="delete-note" data-id="${note._id}">Delete</button>
                 </div>
-            `);
+                <p>${note.content}</p>
+                <div class="note-tags">${note.tags.join(', ')}</div>
+                <div class="note-color">Color: ${note.color}</div>
+                <div class="note-reminder">Reminder: ${new Date(note.reminder).toLocaleString()}</div>
+            `;
+            notesList.appendChild(noteDiv);
         });
-        $('.delete-note').click(function() {
-            const noteId = $(this).data('id');
-            deleteNote(noteId);
+
+        document.querySelectorAll('.delete-note').forEach(button => {
+            button.addEventListener('click', function() {
+                const noteId = this.getAttribute('data-id');
+                deleteNote(noteId);
+            });
         });
     };
 
     const deleteNote = (noteId) => {
-        $.ajax({
-            url: `${apiUrl}/notes/${noteId}`,
+        fetch(`${apiUrl}/notes/${noteId}`, {
             method: 'DELETE',
             headers: {
                 'x-auth-token': token
-            },
-            success: () => {
-                fetchNotes();
-            },
-            error: () => {
-                alert('Failed to delete note');
             }
+        })
+        .then(() => {
+            fetchNotes();
+        })
+        .catch(() => {
+            alert('Failed to delete note');
         });
     };
 
-    $('#login-form').submit(function(e) {
+    document.getElementById('login-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        const email = $('#login-email').val();
-        const password = $('#login-password').val();
-        $.ajax({
-            url: `${apiUrl}/auth/login`,
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ email, password }),
-            success: (data) => {
-                token = data.token;
-                localStorage.setItem('token', token);
-                showNotes();
-            },
-            error: () => {
-                alert('Login failed');
-            }
-        });
-    });
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
 
-    $('#register-form').submit(function(e) {
-        e.preventDefault();
-        const name = $('#register-name').val();
-        const email = $('#register-email').val();
-        const password = $('#register-password').val();
-        $.ajax({
-            url: `${apiUrl}/auth/register`,
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({ name, email, password }),
-            success: (data) => {
-                token = data.token;
-                localStorage.setItem('token', token);
-                showNotes();
-            },
-            error: () => {
-                alert('Registration failed');
-            }
-        });
-    });
-
-    $('#create-note-form').submit(function(e) {
-        e.preventDefault();
-        const title = $('#note-title').val();
-        const content = $('#note-content').val();
-        const tags = $('#note-tags').val().split(',').map(tag => tag.trim());
-        const color = $('#note-color').val();
-        const reminder = $('#note-reminder').val();
-        $.ajax({
-            url: `${apiUrl}/notes`,
+        fetch(`${apiUrl}/auth/login`, {
             method: 'POST',
             headers: {
-                'x-auth-token': token
+                'Content-Type': 'application/json'
             },
-            contentType: 'application/json',
-            data: JSON.stringify({ title, content, tags, color, reminder }),
-            success: () => {
-                fetchNotes();
-                $('#create-note-form')[0].reset();
-            },
-            error: () => {
-                alert('Failed to create note');
-            }
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            token = data.token;
+            localStorage.setItem('token', token);
+            showNotes();
+        })
+        .catch(() => {
+            alert('Login failed');
         });
     });
 
-    $('#logout').click(function() {
+    document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+
+        fetch(`${apiUrl}/auth/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ name, email, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            token = data.token;
+            localStorage.setItem('token', token);
+            showNotes();
+        })
+        .catch(() => {
+            alert('Registration failed');
+        });
+    });
+
+    document.getElementById('create-note-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const title = document.getElementById('note-title').value;
+        const content = document.getElementById('note-content').value;
+        const tags = document.getElementById('note-tags').value.split(',').map(tag => tag.trim());
+        const color = document.getElementById('note-color').value;
+        const reminder = document.getElementById('note-reminder').value;
+
+        fetch(`${apiUrl}/notes`, {
+            method: 'POST',
+            headers: {
+                'x-auth-token': token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ title, content, tags, color, reminder })
+        })
+        .then(() => {
+            fetchNotes();
+            document.getElementById('create-note-form').reset();
+        })
+        .catch(() => {
+            alert('Failed to create note');
+        });
+    });
+
+    document.getElementById('logout').addEventListener('click', function() {
         localStorage.removeItem('token');
         token = null;
         showAuth();
