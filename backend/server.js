@@ -3,6 +3,7 @@ const connectDB = require('./config/db');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const helmet = require('helmet');
 
 dotenv.config();
 
@@ -20,10 +21,27 @@ app.use(cors(corsOptions));
 
 // Init Middleware
 app.use(bodyParser.json());
+app.use(helmet());
+
+// Set CSP to allow images
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", "data:"],
+      // Add other directives as needed
+    },
+  })
+);
 
 // Define Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/notes', require('./routes/notes'));
+
+// Define Root Route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Notes App');
+});
 
 const PORT = process.env.PORT || 5000;
 
