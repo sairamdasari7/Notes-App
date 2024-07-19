@@ -29,7 +29,6 @@ app.use(
     directives: {
       defaultSrc: ["'self'"],
       imgSrc: ["'self'", "data:"],
-      // Add other directives as needed
     },
   })
 );
@@ -45,4 +44,12 @@ app.get('/', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
+});
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
